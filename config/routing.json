@@ -1,0 +1,14 @@
+[
+  {
+    "route": "/",
+    "name": "home_map",
+    "controller": "MapController",
+    "action": "showMapAction"
+  },
+  {
+    "route": "/wtf",
+    "name": "wtf_route",
+    "controller": "WtfController",
+    "action": "getAllWtfPointsAction"
+  }
+]

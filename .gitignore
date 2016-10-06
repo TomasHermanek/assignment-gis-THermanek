@@ -1,3 +1,4 @@
 config/parameters.json
 .idea/
 vendor/
+composer.lock

@@ -16,9 +16,10 @@ class WtfController {
 
     public function getAllWtfPointsAction() {
         $wtfPoints = $this->database->query($this->wtfRepository->getSqlOfAllWtfPoints());
-
+        $result = array();
         while ($row = \pg_fetch_array($wtfPoints)) {
-            var_dump($row);
+            array_push($result, $row);
         }
+        return $result;
     }
 }

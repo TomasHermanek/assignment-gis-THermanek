@@ -23,6 +23,8 @@ class PostgressDb implements DatabaseInterface{
             $connectionString = sprintf("host=%s port=%s dbname=%s user=%s password=%s",
                 $this->dbHost, $this->dbPort, $this->dbName, $this->dbUsername, $this->dbPassword);
             $this->conn = \pg_connect($connectionString);
+            if (!$this->conn)
+                throw new \Exception('Database connection failed');
         }
     }
 

@@ -7,25 +7,29 @@
     use Core\Routing;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
+    use Symfony\Component\HttpFoundation\JsonResponse;
 
-    $str = file_get_contents('config/parameters.json');
-    $json = json_decode($str, true);
+    $parametersJson = file_get_contents('config/parameters.json');
+    $parameters = json_decode($parametersJson, true);
 
-    $database = new PostgressDb($json['host'], $json['port'], $json['dbName'], $json['usernameName'], $json['userPassword']);
+    $database = new PostgressDb($parameters['host'], $parameters['port'], $parameters['dbName'],
+                                $parameters['usernameName'], $parameters['userPassword']);
     $database->connect();
 
+
     $wtfRepository = new WtfRepository();
+/*
     $controller = new WtfController($database, $wtfRepository);
     $result = $controller->getAllWtfPointsAction();
-
+*/
     $request = Request::createFromGlobals();
 
     $router = new Routing();
     try {
         $routeParameters = $router->matchRoute($request);
         $objectString = 'Controller\\'.$routeParameters['controller'];
-        $object = new $objectString;
-        $object->{$routeParameters['action']}($request);
+        $object = new $objectString($database, $wtfRepository);
+        $responseData = $object->{$routeParameters['action']}($request);
     }
     catch (Symfony\Component\Routing\Exception\ResourceNotFoundException $exception) {
         $response = new Response();

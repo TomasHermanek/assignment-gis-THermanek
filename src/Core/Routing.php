@@ -30,12 +30,19 @@ class Routing {
         $this->loadRoutes();
     }
 
+    /**
+     * This function matches request traversing private routeCollection. Matcher ignores $_GET parameters while
+     * matching correct route.
+     *
+     * @param Request $request
+     * @return array
+     */
     public function matchRoute(Request $request){
         $context = new RequestContext();
         $context->fromRequest($request);
 
         $matcher = new UrlMatcher($this->routeCollection, $context);
-        $parameters = $matcher->match($request->getRequestUri());
+        $parameters = $matcher->match($context->getPathInfo());
         return $parameters;
     }
 }

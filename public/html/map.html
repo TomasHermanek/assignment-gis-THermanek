@@ -4,6 +4,7 @@
     <meta charset='utf-8' />
     <title></title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.25.1/mapbox-gl.js'></script>
     <script src='public/js/app.js'></script>
@@ -15,7 +16,12 @@
 </head>
 <body>
 
-<div id='map'></div>
+<div class="container">
+    <div class="row">
+        <div id='map'></div>
+    </div>
+</div>
+
 <script>
     mapboxgl.accessToken = 'pk.eyJ1IjoidG9taGVybWFuZWsiLCJhIjoiY2l0eWpkcW5tMDA0MDNvcDFsN3I4ZGJxMyJ9.9kK6s_zWmDTQXN2HcL_V-Q';
     var map = new mapboxgl.Map({

@@ -20,18 +20,14 @@ class WtfController {
         $wtfPoints = $this->database->query($this->wtfRepository->getSqlOfAllWtfPoints());
         $result = array();
 
-        $row = \pg_fetch_array($wtfPoints);
-        if ($row) {
-            $result['coordinates'] = array();
-            $rowArray = json_decode($row['st_asgeojson'], true);
-
-            $result["type"] = $rowArray["type"];
-            array_push($result['coordinates'], $rowArray['coordinates']);
-        }
-
+        $i = 0;
         while ($row = \pg_fetch_array($wtfPoints)) {
-            $rowArray = json_decode($row['st_asgeojson'], true);
-            array_push($result['coordinates'], $rowArray['coordinates']);
+            $result[$i]['geometry'] = json_decode($row['st_asgeojson'], true);
+
+            $result[$i]['properties'] = array();
+            $result[$i]['properties']['title'] = $row['name'];
+            $result[$i]['properties']['icon'] = 'fast-food';
+            $i++;
         }
 
         $response = new JsonResponse();

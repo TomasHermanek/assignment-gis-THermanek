@@ -5,41 +5,25 @@ $(document).ready(function () {
             "type": "geojson",
             "data": {
                 "type": "FeatureCollection",
-                "features": [
-                    {
-                        "type": "Feature",
-                        "properties": {},
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [
-                                17.10468292236328,
-                                48.158814559520785
-                            ]
-                        }
+                "features": [{
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [17.077699, 48.1400]
                     },
-                    {
-                        "type": "Feature",
-                        "properties": {},
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [
-                                17.12571144104004,
-                                48.154004920838986
-                            ]
-                        }
-                    },
-                    {
-                        "type": "Feature",
-                        "properties": {},
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [
-                                17.103652954101562,
-                                48.14444156183988
-                            ]
-                        }
+                    "properties": {
+                        "title": "Mapbox DC",
+                        "icon": "anchor"
                     }
-                ]
+                }, {
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [17.077615, 48.145361]
+                    },
+                    "properties": {
+                        "title": "Mapbox SF",
+                        "icon": "anchor"
+                    }
+                }]
             }
         });
 
@@ -48,7 +32,7 @@ $(document).ready(function () {
             "type": "symbol",
             "source": "points",
             "layout": {
-                "icon-image": "{icon}-15",
+                "icon-image": "{icon}-11",
                 "text-field": "{title}",
                 "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
                 "text-offset": [0, 0.6],
@@ -70,7 +54,23 @@ $(document).ready(function () {
 
                     map.addSource("supermarkets", {
                         "type": "geojson",
-                        "data": obj
+                        "data": {
+                            "type": "FeatureCollection",
+                            "features": obj
+                        }
+                    });
+
+                    map.addLayer({
+                        "id": "supermarkets",
+                        "type": "symbol",
+                        "source": "supermarkets",
+                        "layout": {
+                            "icon-image": "{icon}-11",
+                            "text-field": "{title}",
+                            "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                            "text-offset": [0, 0.6],
+                            "text-anchor": "top"
+                        }
                     });
                 }
             }

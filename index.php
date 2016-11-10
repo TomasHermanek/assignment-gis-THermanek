@@ -13,7 +13,7 @@
     $parameters = json_decode($parametersJson, true);
 
     $database = new PostgressDb($parameters['host'], $parameters['port'], $parameters['dbName'],
-                                $parameters['usernameName'], $parameters['userPassword']);
+                                $parameters['userName'], $parameters['userPassword']);
     $database->connect();
 
 

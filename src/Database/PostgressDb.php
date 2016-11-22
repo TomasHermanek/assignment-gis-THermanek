@@ -34,6 +34,14 @@ class PostgressDb implements DatabaseInterface{
         return \pg_query($this->conn, $sql);
     }
 
+    public function queryParams($sql, array $params) {
+        if (!$this->conn)
+            throw new \Exception("Database is disconected", 500);
+        echo $sql;
+        var_dump($params);
+        return \pg_query_params($this->conn, $sql, $params);
+    }
+
     public function disconnect() {
         if ($this->conn) {
             \pg_close($this->conn);

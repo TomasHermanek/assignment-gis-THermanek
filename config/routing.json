@@ -10,5 +10,17 @@
     "name": "wtf_route",
     "controller": "WtfController",
     "action": "getAllWtfPointsAction"
+  },
+  {
+    "route": "/bar-parking",
+    "name": "parking-route",
+    "controller": "WtfController",
+    "action": "finBarParking"
+  },
+  {
+    "route": "/bar-population",
+    "name": "population-route",
+    "controller": "WtfController",
+    "action": "findBarPopulation"
   }
 ]

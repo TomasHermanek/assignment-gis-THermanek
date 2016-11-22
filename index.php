@@ -18,10 +18,6 @@
 
 
     $wtfRepository = new WtfRepository();
-/*
-    $controller = new WtfController($database, $wtfRepository);
-    $result = $controller->getAllWtfPointsAction();
-*/
     $request = Request::createFromGlobals();
 
     $router = new Routing();

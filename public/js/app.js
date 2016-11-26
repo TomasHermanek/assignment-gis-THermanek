@@ -79,6 +79,59 @@ function addPolygon(map, sourceName, object, colour) {
     customSources[customSources.length]=sourceName;
 }
 
+function makeLine(startLat, startLng, endLat, endLng) {
+    line = {
+        "type": "Feature",
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [startLat, startLng],
+                [endLat, endLng]
+            ]
+        }
+    };
+    return line;
+}
+
+function makePath(startLat, startLng, points) {
+    var routeFeatures = [];
+
+    $.each(points, function (index, value) {
+        if (index == 0) {
+            line = makeLine(startLng, startLat, value['geometry']['coordinates'][0], value['geometry']['coordinates'][1])
+        }
+        else {
+            line = makeLine(points[index-1]['geometry']['coordinates'][0], points[index-1]['geometry']['coordinates'][1],
+                value['geometry']['coordinates'][0], value['geometry']['coordinates'][1])
+        }
+
+        routeFeatures.push(line);
+    });
+
+    var routeSource = {
+        "type": "FeatureCollection",
+        "features": routeFeatures
+    };
+
+    map.addSource('route', {
+        "type": "geojson",
+        "data": routeSource
+    });
+
+    map.addLayer({
+        "id": "route",
+        "source": "route",
+        "type": "line",
+        "paint": {
+            "line-width": 2,
+            "line-color": "#007cbf"
+        }
+    });
+
+    customLayers[customLayers.length]='route';
+    customSources[customSources.length]='route';
+}
+
 $(document).ready(function () {
     map.on('load', function () {
 
@@ -110,6 +163,10 @@ $(document).ready(function () {
         $.ajax({
             type: "GET",
             url: "http://localhost:8080/wtf",
+            data: {
+                lat: clickedLat,
+                lng: clickedLng
+            },
             dataType: "jsonp",
 
             statusCode: {
@@ -117,7 +174,9 @@ $(document).ready(function () {
                     var responseJson= response.responseText;
                     var obj = jQuery.parseJSON(responseJson);
 
-                    map.addSource("supermarkets", {
+                    console.log(obj);
+
+                    map.addSource("tour", {
                         "type": "geojson",
                         "data": {
                             "type": "FeatureCollection",
@@ -126,9 +185,9 @@ $(document).ready(function () {
                     });
 
                     map.addLayer({
-                        "id": "supermarkets",
+                        "id": "tour",
                         "type": "symbol",
-                        "source": "supermarkets",
+                        "source": "tour",
                         "layout": {
                             "icon-image": "{icon}-11",
                             "text-field": "{title}",
@@ -138,8 +197,10 @@ $(document).ready(function () {
                         }
                     });
 
-                    customLayers[customLayers.length]='supermarkets';
-                    customSources[customSources.length]='supermarkets';
+                    customLayers[customLayers.length]='tour';
+                    customSources[customSources.length]='tour';
+
+                    makePath(clickedLat, clickedLng, obj);
                 }
             }
         });
@@ -148,7 +209,6 @@ $(document).ready(function () {
     $('.bar-parking').on('click', function () {
         clearMap(map);
         var barName = $('#bar-parking-search').val();
-        console.log(barName);
 
         $.ajax({
             type: "POST",

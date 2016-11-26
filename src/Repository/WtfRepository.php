@@ -8,35 +8,30 @@ class WtfRepository {
                 WHERE ST_Contains(p.way, pt.way) and p.name = 'Karlova Ves' and pt.shop = 'supermarket'";
     }
 
-    public function getSqlOfAllWtfPoints() {
+    public function getSqlOfAllWtfPoints($lng, $lat) {
         return "
-        with recursive bar(i, name, way, distance) as (
-        (select 0, name, way, cast(0 as double precision) 
-        from planet_osm_point 
-        where name = 'KC Dunaj')
-        union all
-        (select i+1,t2.name, t2.way, ST_Distance(t1.way, t2.way) as distance
-        from bar t1
-        cross join planet_osm_point t2
-        where 
-        t2.amenity = 'bar' and i<10
-        order by distance
-        limit 10)
+        WITH RECURSIVE BAR(name, way, distance, bars) as (
+            (SELECT name, way, cast(0 as double precision), array[osm_id] 
+            FROM planet_osm_point 
+            WHERE 
+              amenity IN ('bar', 'pub', 'restaurant')
+            ORDER BY ST_DISTANCE(way, ST_GeogFromText('SRID=4326;POINTM($lat $lng 1336176082171)'))
+            LIMIT 1
+            )
+        UNION ALL
+            (SELECT t2.name, t2.way, ST_DISTANCE(t1.way, t2.way) distance, t1.bars || t2.osm_id
+            FROM bar t1
+            CROSS JOIN planet_osm_point t2
+            WHERE 
+              t2.amenity IN ('bar', 'pub', 'restaurant') AND
+              t1.name != t2.name AND
+            NOT t2.osm_id = any(t1.bars) 
+            ORDER BY distance
+            LIMIT 1 )
         )
-        select name, ST_AsGeoJSON(way) from bar";
+        SELECT name, ST_AsGeoJSON(way) FROM bar LIMIT 10";
     }
 
-    /*
-    public function getSqlBarParkingCoordinates($lat, $lng) {
-        return "
-            SELECT pk.name, ST_AsGeoJSON(pk.way) 
-            FROM planet_osm_point pk 
-            WHERE pk.amenity='pub' 
-            ORDER BY ST_DISTANCE(pk.way, ST_GeogFromText('SRID=4326;POINTM($lng $lat 1336176082171)')) 
-            LIMIT 1
-        ";
-    }
-    */
     public function getSqlBarParkingCoordinates($barName) {
         return "
         SELECT t1.name, ST_AsGeoJSON(t1.way) pub_way, ST_AsGeoJSON(t2.way) parking_way
@@ -61,7 +56,8 @@ class WtfRepository {
 
     public function getSqlPopulation() {
         return "
-            select DISTINCT(vl.name) village, ST_AsGeoJSON(ar.way), (CAST(vl.population AS bigint) / count(pb.amenity)) as diversity from planet_osm_point vl
+            select DISTINCT(vl.name) village, ST_AsGeoJSON(ar.way), (CAST(vl.population AS bigint) / count(pb.amenity)) as diversity 
+                from planet_osm_point vl
                 cross join planet_osm_polygon ar
                 cross join planet_osm_point pb
                 where

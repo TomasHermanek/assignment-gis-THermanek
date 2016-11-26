@@ -2,7 +2,7 @@
     require_once __DIR__ . '/vendor/autoload.php';
 
     use Database\PostgressDb;
-    use Controller\WtfController;
+    use Controller\AjaxController;
     use Repository\WtfRepository;
     use Core\Routing;
     use Symfony\Component\HttpFoundation\Request;

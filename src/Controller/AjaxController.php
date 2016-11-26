@@ -7,7 +7,7 @@ use Repository\WtfRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class WtfController {
+class AjaxController {
     private $wtfRepository;
     private $database;
     private $userLng;
@@ -28,26 +28,33 @@ class WtfController {
     }
 
     public function getAllWtfPointsAction(Request $request) {
-        $wtfPoints = $this->database->query($this->wtfRepository->getSqlOfAllWtfPoints());
         $result = array();
 
-        $i = 0;
-        while ($row = \pg_fetch_array($wtfPoints)) {
-            $result[$i]['geometry'] = json_decode($row['st_asgeojson'], true);
-
-            $result[$i]['properties'] = array();
-            $result[$i]['properties']['title'] = $row['name'];
-            $result[$i]['properties']['icon'] = 'fast-food';
-            $i++;
+        if (!$this->loadCoordinates($request)) {
+            $response = new JsonResponse();
+            $response->setStatusCode(JsonResponse::HTTP_NO_CONTENT);
+            $response->send();
         }
+        else {
+            $wtfPoints = $this->database->query($this->wtfRepository->getSqlOfAllWtfPoints($this->userLat, $this->userLng));
+            $i = 0;
+            while ($row = \pg_fetch_array($wtfPoints)) {
+                $result[$i]['geometry'] = json_decode($row['st_asgeojson'], true);
 
-        $response = new JsonResponse();
-        $response->prepare($request);
-        $response->setCallback('handleResponse');
-        $response->setContent(json_encode($result));
+                $result[$i]['properties'] = array();
+                $result[$i]['properties']['title'] = $i." ".$row['name'];
+                $result[$i]['properties']['icon'] = 'fast-food';
+                $i++;
+            }
 
-        $response->setStatusCode(JsonResponse::HTTP_OK);
-        $response->send();
+            $response = new JsonResponse();
+            $response->prepare($request);
+            $response->setCallback('handleResponse');
+            $response->setContent(json_encode($result));
+
+            $response->setStatusCode(JsonResponse::HTTP_OK);
+            $response->send();
+        }
     }
 
     public function finBarParking(Request $request) {
@@ -83,7 +90,7 @@ class WtfController {
     }
 
     /**
-     * Diversity 0 .. 50, 51 ... 100, 101 ... 200, 201 ... 500, 501+
+     * Diversity 0 .. 50, 51 ... 100, 101 ... 200, 201 ... 500, 501+        // ToDO change diversity into variable(array)
      *
      * @param Request $request
      */

@@ -20,8 +20,11 @@ Build a map-based application, which lets the user see geo-based data on a map a
 
 Fill in (either in English, or in Slovak):
 
-**Application description**: `<fill in>`
+**Application description**:
+This application helps people to choose bar, find parking place and display some interesting statistics. Key features are: - find first 10 bars with closest location to marker point - show population diversity(count of people per one bar) in most Slovak villages - bar searching with closes parking place
 
-**Data source**: `<fill in>`
+**Data source**: 
+OpenStreetMap
 
-**Technologies used**: `<fill in>`
+**Technologies used**: 
+PHP, Symfony, Postgress, PostGis, Javascript, HTML, CSS

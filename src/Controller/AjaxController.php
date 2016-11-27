@@ -32,8 +32,8 @@ class AjaxController {
      * @return bool
      */
     public function loadCoordinates(Request $request) {
-        $this->userLat = $request->get('lat');
-        $this->userLng = $request->get('lng');
+        $this->userLat = \htmlspecialchars($request->get('lat'));
+        $this->userLng = \htmlspecialchars($request->get('lng'));
 
         if ($this->userLng == null or $this->userLng == null)
             return false;
@@ -79,33 +79,40 @@ class AjaxController {
     public function finBarParking(Request $request) {
         $result = array();
 
-        $barName = $request->get('barName');
+        $barName = \htmlspecialchars($request->get('barName'));
 
-        $sql = $this->wtfRepository->getSqlBarParkingCoordinates($barName);
-        $wtfPoints = $this->database->query($sql);
-
-        $i = 0;
-
-        while ($row = \pg_fetch_array($wtfPoints)) {
-            $result[$i]['geometry'] = json_decode($row['pub_way'], true);
-            $result[$i]['properties'] = array();
-            $result[$i]['properties']['title'] = $row['name'];
-            $result[$i]['properties']['icon'] = 'bar';
-            $i++;
-            $result[$i]['geometry'] = json_decode($row['parking_way'], true);
-            $result[$i]['properties'] = array();
-            $result[$i]['properties']['title'] = 'parking place';
-            $result[$i]['properties']['icon'] = 'car';
-            $i++;
+        if (!$barName) {
+            $response = new JsonResponse();
+            $response->setStatusCode(JsonResponse::HTTP_NO_CONTENT);
+            $response->send();
         }
+        else {
+            $sql = $this->wtfRepository->getSqlBarParkingCoordinates($barName);
+            $wtfPoints = $this->database->query($sql);
 
-        $response = new JsonResponse();
-        $response->prepare($request);
-        $response->setCallback('handleResponse');
-        $response->setContent(json_encode($result));
+            $i = 0;
 
-        $response->setStatusCode(JsonResponse::HTTP_OK);
-        $response->send();
+            while ($row = \pg_fetch_array($wtfPoints)) {
+                $result[$i]['geometry'] = json_decode($row['pub_way'], true);
+                $result[$i]['properties'] = array();
+                $result[$i]['properties']['title'] = $row['name'];
+                $result[$i]['properties']['icon'] = 'bar';
+                $i++;
+                $result[$i]['geometry'] = json_decode($row['parking_way'], true);
+                $result[$i]['properties'] = array();
+                $result[$i]['properties']['title'] = 'parking place';
+                $result[$i]['properties']['icon'] = 'car';
+                $i++;
+            }
+
+            $response = new JsonResponse();
+            $response->prepare($request);
+            $response->setCallback('handleResponse');
+            $response->setContent(json_encode($result));
+
+            $response->setStatusCode(JsonResponse::HTTP_OK);
+            $response->send();
+        }
     }
 
     /**

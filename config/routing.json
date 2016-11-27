@@ -6,7 +6,7 @@
     "action": "showMapAction"
   },
   {
-    "route": "/wtf",
+    "route": "/bar-route",
     "name": "wtf_route",
     "controller": "AjaxController",
     "action": "findBarPath"

@@ -122,7 +122,7 @@ Response contains GeoJson polygon objects divided into 5 categories based on pop
 
 **Find bar parking spot**
 
-`POST /bar-route?lat=25346&lng=46346123`
+`POST /bar-parking`
 Form Data: 
   barName: kc dunaj
 

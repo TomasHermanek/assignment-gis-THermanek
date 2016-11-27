@@ -2,13 +2,17 @@
 
 namespace Repository;
 
-class WtfRepository {
-    public function getSqlOfAllWtfPoints2() {
-        return "SELECT pt.name, ST_AsGeoJSON(pt.way) FROM planet_osm_point pt, planet_osm_polygon p
-                WHERE ST_Contains(p.way, pt.way) and p.name = 'Karlova Ves' and pt.shop = 'supermarket'";
-    }
-
-    public function getSqlOfAllWtfPoints($lng, $lat) {
+/**
+ * Class BarRepository
+ * @package Repository
+ */
+class BarRepository {
+    /**
+     * @param $lng
+     * @param $lat
+     * @return string
+     */
+    public function getBarPathSql($lng, $lat) {
         return "
         WITH RECURSIVE BAR(name, way, distance, bars) as (
             (SELECT name, way, cast(0 as double precision), array[osm_id] 
@@ -24,7 +28,6 @@ class WtfRepository {
             CROSS JOIN planet_osm_point t2
             WHERE 
               t2.amenity IN ('bar', 'pub', 'restaurant') AND
-              t1.name != t2.name AND
             NOT t2.osm_id = any(t1.bars) 
             ORDER BY distance
             LIMIT 1 )
@@ -32,6 +35,10 @@ class WtfRepository {
         SELECT name, ST_AsGeoJSON(way) FROM bar LIMIT 10";
     }
 
+    /**
+     * @param $barName
+     * @return string
+     */
     public function getSqlBarParkingCoordinates($barName) {
         return "
         SELECT t1.name, ST_AsGeoJSON(t1.way) pub_way, ST_AsGeoJSON(t2.way) parking_way
@@ -42,7 +49,7 @@ class WtfRepository {
             WHERE
               pk.amenity = 'parking' and
               pb.amenity IN ('bar', 'pub', 'restaurant') and
-              pb.name = '$barName'
+              LOWER(pb.name) LIKE LOWER('$barName%')
             GROUP BY
               pb.osm_id
         ) as min 
@@ -53,7 +60,9 @@ class WtfRepository {
         ";
     }
 
-
+    /**
+     * @return string
+     */
     public function getSqlPopulation() {
         return "
             select DISTINCT(vl.name) village, ST_AsGeoJSON(ar.way), (CAST(vl.population AS bigint) / count(pb.amenity)) as diversity 

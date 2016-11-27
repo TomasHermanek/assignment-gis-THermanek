@@ -19,7 +19,6 @@
             <a class="navbar-brand" href="#">Tour de bar</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
             <li><a class="bar-path" href="#">Find tour de bar path</a></li>
             <li><a class="bar-population" href="#">Find population diversity</a></li>
         </ul>
@@ -36,18 +35,17 @@
 
 <div id='map'></div>
 
-<div class='my-legend'>
-    <div class='legend-title'>The Title or Explanation of your Map</div>
-    <div class='legend-scale'>
-        <ul class='legend-labels'>
-            <li><span style='background:#8DD3C7;'></span>One</li>
-            <li><span style='background:#FFFFB3;'></span>Two</li>
-            <li><span style='background:#BEBADA;'></span>Three</li>
-            <li><span style='background:#FB8072;'></span>Four</li>
-            <li><span style='background:#80B1D3;'></span>etc</li>
+<div class='population-legend' style="display: none;">
+    <div class="population-legend-title">Population diversity expressed in number of people per one bar</div>
+    <div class="population-legend-scale">
+        <ul class="population-legend-labels">
+            <li><span style='background:#a8f9a7;'></span>< 50</li>
+            <li><span style='background:#086006;'></span>< 100</li>
+            <li><span style='background:#e6e86d;'></span>< 200</li>
+            <li><span style='background:#ea972a;'></span>< 500</li>
+            <li><span style='background:#ea402a;'></span>500+</li>
         </ul>
     </div>
-    <div class='legend-source'>Source: <a href="#link to source">Name of source</a></div>
 </div>
 
 <script>

@@ -14,7 +14,7 @@ body {
 
 .coordinates {
     background: rgba(0,0,0,0.5);
-    color: #fff;
+    color: #66ccff;
     position: absolute;
     bottom: 10px;
     left: 10px;
@@ -26,14 +26,14 @@ body {
     display: none;
 }
 
-.my-legend .legend-title {
+.population-legend .population-legend-title {
     position:relative;
     text-align: left;
-    margin-bottom: 5px;
     font-weight: bold;
     font-size: 90%;
+    margin-bottom: 5px;
 }
-.my-legend .legend-scale ul {
+.population-legend .population-legend-scale ul {
     position:relative;
     margin: 0;
     margin-bottom: 5px;
@@ -41,31 +41,25 @@ body {
     float: left;
     list-style: none;
 }
-.my-legend .legend-scale ul li {
+.population-legend .population-legend-scale ul li {
     position:relative;
     font-size: 80%;
     list-style: none;
     margin-left: 0;
-    line-height: 18px;
     margin-bottom: 2px;
+    line-height: 18px;
 }
-.my-legend ul.legend-labels li span {
+.population-legend ul.population-legend-labels li span {
     position:relative;
     display: block;
     float: left;
     height: 16px;
     width: 30px;
+    border: 1px solid #999;
     margin-right: 5px;
     margin-left: 0;
-    border: 1px solid #999;
 }
-.my-legend .legend-source {
-    position:relative;
-    font-size: 70%;
-    color: #999;
-    clear: both;
-}
-.my-legend a {
+.population-legend a {
     position:relative;
     color: #777;
 }

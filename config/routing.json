@@ -9,7 +9,7 @@
     "route": "/wtf",
     "name": "wtf_route",
     "controller": "AjaxController",
-    "action": "getAllWtfPointsAction"
+    "action": "findBarPath"
   },
   {
     "route": "/bar-parking",

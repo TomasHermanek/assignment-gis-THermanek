@@ -20,6 +20,14 @@ function clearMap(map) {
     customSources = [];
 }
 
+function showPopulationLegend() {
+    $('.population-legend').css('display', 'inline');
+}
+
+function hidePopulationLegend() {
+    $('.population-legend').css('display', 'none');
+}
+
 function addMarker(map, lat, lng) {
     var marker = {
         "type": "Feature",
@@ -145,7 +153,7 @@ $(document).ready(function () {
     });
 
     map.on('click', function (e) {
-        var features = map.queryRenderedFeatures(e.point, { layers: ['extraLow','low', 'medium', 'high', 'extraHigh'] });      // ToDO naming to global params
+        var features = map.queryRenderedFeatures(e.point, { layers: ['extraLow','low', 'medium', 'high', 'extraHigh'] });
         if (!features.length) {
             return;
         }
@@ -160,6 +168,8 @@ $(document).ready(function () {
 
     $('.bar-path').on('click', function () {
         clearMap(map);
+        hidePopulationLegend();
+
         $.ajax({
             type: "GET",
             url: "http://localhost:8080/wtf",
@@ -174,7 +184,12 @@ $(document).ready(function () {
                     var responseJson= response.responseText;
                     var obj = jQuery.parseJSON(responseJson);
 
-                    console.log(obj);
+                    map.flyTo({
+                        center: [obj[0]['geometry']['coordinates'][0], obj[0]['geometry']['coordinates'][1]],
+                        zoom: 14,
+                        speed: 0.5,
+                        curve: 1
+                    });
 
                     map.addSource("tour", {
                         "type": "geojson",
@@ -208,6 +223,8 @@ $(document).ready(function () {
 
     $('.bar-parking').on('click', function () {
         clearMap(map);
+        hidePopulationLegend();
+
         var barName = $('#bar-parking-search').val();
 
         $.ajax({
@@ -224,6 +241,13 @@ $(document).ready(function () {
                 200: function (response) {
                     var responseJson= response.responseText;
                     var obj = jQuery.parseJSON(responseJson);
+
+                    map.flyTo({
+                        center: [obj[0]['geometry']['coordinates'][0], obj[0]['geometry']['coordinates'][1]],
+                        zoom: 16,
+                        speed: 0.5,
+                        curve: 1
+                    });
 
                     map.addSource("supermarkets", {
                         "type": "geojson",
@@ -254,6 +278,8 @@ $(document).ready(function () {
     });
     $('.bar-population').on('click', function () {
         clearMap(map);
+        showPopulationLegend();
+
         $.ajax({
             type: "GET",
             url: "http://localhost:8080/bar-population",
@@ -271,15 +297,15 @@ $(document).ready(function () {
                     map.flyTo({
                         center: [centerLat, centerLng],
                         zoom: 8,
-                        speed: 0.2,
+                        speed: 0.5,
                         curve: 1
                     });
 
-                    addPolygon(map, 'extraLow', obj['extraLow'], '136, 231, 95');
-                    addPolygon(map, 'low', obj['low'], '50, 124, 19');
-                    addPolygon(map, 'medium', obj['medium'], '231, 211, 95');
-                    addPolygon(map, 'high', obj['high'], '124, 108, 19');
-                    addPolygon(map, 'extraHigh', obj['extraHigh'], '169, 25, 25');
+                    addPolygon(map, 'extraLow', obj['extraLow'], '168, 249, 167');
+                    addPolygon(map, 'low', obj['low'], '8, 96, 6');
+                    addPolygon(map, 'medium', obj['medium'], '230, 232, 109');
+                    addPolygon(map, 'high', obj['high'], '234, 151, 42');
+                    addPolygon(map, 'extraHigh', obj['extraHigh'], '234, 64, 42');
                 }
             }
         });

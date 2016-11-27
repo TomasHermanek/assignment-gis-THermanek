@@ -4,7 +4,14 @@ namespace Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class MapController
+ * @package Controller
+ */
 class MapController {
+    /**
+     * Shows map main
+     */
     public function showMapAction() {
         $content =  file_get_contents("public/html/map.html");
 

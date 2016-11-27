@@ -8,10 +8,16 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 
-
+/**
+ * Class Routing handles routing in app
+ * @package Core
+ */
 class Routing {
     private $routeCollection;
 
+    /**
+     * Function load routes from configuration
+     */
     private function loadRoutes() {
         $routesJson = file_get_contents('config/routing.json');
         $routesArray = json_decode($routesJson, true);

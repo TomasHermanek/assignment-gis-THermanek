@@ -3,21 +3,34 @@
 namespace Controller;
 
 use Database\DatabaseInterface;
-use Repository\WtfRepository;
+use Repository\BarRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class AjaxController
+ * @package Controller
+ */
 class AjaxController {
     private $wtfRepository;
     private $database;
     private $userLng;
     private $userLat;
 
-    public function __construct(DatabaseInterface $database, WtfRepository $wtfRepository) {
+    /**
+     * AjaxController constructor.
+     * @param DatabaseInterface $database
+     * @param BarRepository $wtfRepository
+     */
+    public function __construct(DatabaseInterface $database, BarRepository $wtfRepository) {
         $this->wtfRepository = $wtfRepository;
         $this->database = $database;
     }
 
+    /**
+     * @param Request $request
+     * @return bool
+     */
     public function loadCoordinates(Request $request) {
         $this->userLat = $request->get('lat');
         $this->userLng = $request->get('lng');
@@ -27,7 +40,10 @@ class AjaxController {
         return true;
     }
 
-    public function getAllWtfPointsAction(Request $request) {
+    /**
+     * @param Request $request
+     */
+    public function findBarPath(Request $request) {
         $result = array();
 
         if (!$this->loadCoordinates($request)) {
@@ -36,14 +52,14 @@ class AjaxController {
             $response->send();
         }
         else {
-            $wtfPoints = $this->database->query($this->wtfRepository->getSqlOfAllWtfPoints($this->userLat, $this->userLng));
+            $wtfPoints = $this->database->query($this->wtfRepository->getBarPathSql($this->userLat, $this->userLng));
             $i = 0;
             while ($row = \pg_fetch_array($wtfPoints)) {
                 $result[$i]['geometry'] = json_decode($row['st_asgeojson'], true);
 
                 $result[$i]['properties'] = array();
-                $result[$i]['properties']['title'] = $i." ".$row['name'];
-                $result[$i]['properties']['icon'] = 'fast-food';
+                isset($row['name'])? $result[$i]['properties']['title'] = $row['name']: $result[$i]['properties']['title'] = '*Unnamed*';
+                $result[$i]['properties']['icon'] = 'bar';
                 $i++;
             }
 
@@ -57,6 +73,9 @@ class AjaxController {
         }
     }
 
+    /**
+     * @param Request $request
+     */
     public function finBarParking(Request $request) {
         $result = array();
 
@@ -90,7 +109,7 @@ class AjaxController {
     }
 
     /**
-     * Diversity 0 .. 50, 51 ... 100, 101 ... 200, 201 ... 500, 501+        // ToDO change diversity into variable(array)
+     * Diversity 0 .. 50, 51 ... 100, 101 ... 200, 201 ... 500, 501+
      *
      * @param Request $request
      */
@@ -126,7 +145,6 @@ class AjaxController {
             $geoJsonObject['properties'] = array();
             $geoJsonObject['properties']['name'] = $row['village'].": ".$diversity. " people per bar";
             $geoJsonObject['properties']['title'] = $row['village'];
-            $geoJsonObject['properties']['icon'] = 'fast-food';
 
             $result[$targetArray][] = $geoJsonObject;
             $i++;

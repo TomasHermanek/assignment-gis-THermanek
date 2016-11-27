@@ -2,12 +2,10 @@
     require_once __DIR__ . '/vendor/autoload.php';
 
     use Database\PostgressDb;
-    use Controller\AjaxController;
-    use Repository\WtfRepository;
+    use Repository\BarRepository;
     use Core\Routing;
     use Symfony\Component\HttpFoundation\Request;
     use Symfony\Component\HttpFoundation\Response;
-    use Symfony\Component\HttpFoundation\JsonResponse;
 
     $parametersJson = file_get_contents('config/parameters.json');
     $parameters = json_decode($parametersJson, true);
@@ -17,7 +15,7 @@
     $database->connect();
 
 
-    $wtfRepository = new WtfRepository();
+    $wtfRepository = new BarRepository();
     $request = Request::createFromGlobals();
 
     $router = new Routing();
